@@ -16,23 +16,22 @@ def build_map(group):
 def range_intersection(source, seed):
     start = max(source.start, seed.start)
     stop = min(source.stop, seed.stop)
-    if start < stop:
-       return range(start, stop)
+    if start < stop: return range(start, stop)
     else: return None
 
 def apply_map(seeds, m):
-    new_seeds = []
-    for seed in seeds:
+    for i, seed in enumerate(seeds):
         for source, offset in m.items():
             intersection = range_intersection(source, seed)
             if intersection:
-                new_seeds.append(range(intersection.start + offset,
-                                       intersection.stop + offset))
+                seeds[i] = range(intersection.start + offset,
+                                 intersection.stop + offset)
                 if seed.start < intersection.start:
                     seeds.append(range(seed.start, intersection.start))
                 if seed.stop > intersection.stop:
                     seeds.append(range(intersection.stop, seed.stop))
-    return new_seeds
+                break
+    return seeds
 
 maps = []
 start_func = lambda r: r.start
