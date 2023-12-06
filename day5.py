@@ -13,27 +13,6 @@ def build_map(group):
     new_map = {range(s, s+r) : d - s for d, s, r in dsrs}
     maps.append(new_map)
 
-maps = []
-groups = groupby(lines[2:], lambda x: x == '\n')
-list(map(build_map, [list(group)[1:] for key, group in groups if not key]))
-
-# part 1
-seeds = get_ints(lines[0])
-
-def get_seed_value(key):
-    for m in maps:
-        for k, v in m.items():
-            if key in k:
-                key += v
-                break
-    return key
-
-print(min(map(get_seed_value, seeds)))
-
-# part 2
-func = lambda xy: range(xy[0], xy[0]+xy[1])
-seeds = list(map(func, list(zip(*[iter(seeds)]*2))))
-
 def range_intersection(source, seed):
     start = max(source.start, seed.start)
     stop = min(source.stop, seed.stop)
@@ -55,5 +34,18 @@ def apply_map(seeds, m):
                     seeds.append(range(intersection.stop, seed.stop))
     return new_seeds
 
-func = lambda r: r.start
-print(min(map(func, reduce(apply_map, maps, seeds))))
+maps = []
+start_func = lambda r: r.start
+groups = groupby(lines[2:], lambda x: x == '\n')
+list(map(build_map, [list(group)[1:] for key, group in groups if not key]))
+seeds = get_ints(lines[0])
+
+# part 1
+func = lambda seed: range(seed, seed+1)
+ranges = list(map(func, seeds))
+print(min(map(start_func, reduce(apply_map, maps, ranges))))
+
+# part 2
+func = lambda xy: range(xy[0], xy[0]+xy[1])
+ranges = list(map(func, list(zip(*[iter(seeds)]*2))))
+print(min(map(start_func, reduce(apply_map, maps, ranges))))
