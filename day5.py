@@ -21,7 +21,6 @@ list(map(build_map, [list(group)[1:] for key, group in groups if not key]))
 seeds = get_ints(lines[0])
 
 def get_seed_value(key):
-    key = reduce()
     for m in maps:
         for k, v in m.items():
             if key in k:
