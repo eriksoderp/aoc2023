@@ -1,5 +1,6 @@
 import re
 from math import prod
+import numpy as np
 
 def get_ints(line):
     return list(map(int, re.findall(r'\d+', line)))
@@ -8,9 +9,9 @@ with open('input6.txt', 'r') as f:
     lines = f.readlines()
 
 def scores_over(total_time, hi_score):
-    for hold_time in range(total_time+1):
-        if hold_time*(total_time-hold_time) > hi_score:
-            return total_time - 2*hold_time + 1
+    roots = np.roots([-1, total_time, -hi_score])
+    f = lambda root: int(root.real) + 1
+    return total_time - 2*min(map(f, roots)) + 1
 
 # part 1
 times, scores = map(get_ints, lines)
