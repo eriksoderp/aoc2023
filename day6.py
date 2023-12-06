@@ -10,8 +10,7 @@ with open('input6.txt', 'r') as f:
 
 def scores_over(total_time, hi_score):
     roots = np.roots([-1, total_time, -hi_score])
-    f = lambda root: int(root.real) + 1
-    return total_time - 2*min(map(f, roots)) + 1
+    return total_time - 2*(int(min(roots)) + 1) + 1
 
 # part 1
 times, scores = map(get_ints, lines)
