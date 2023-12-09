@@ -7,7 +7,7 @@ with open('input9.txt', 'r') as f:
 get_ints = lambda line: list(map(int, re.findall(r'-?\d+', line)))
 histories = list(map(get_ints, lines))
 
-def top_right(history):
+def left_rights(history):
     lefts, rights = 0, 0
     sign = 1
     while not set(history) == {0}:
@@ -21,4 +21,4 @@ def top_right(history):
 sumf = lambda lr, current: (lr[0]+current[0], lr[1]+current[1])
 
 # left value part 2, right value part 1
-print(list(reduce(sumf, list(map(top_right, histories)), (0, 0))))
+print(list(reduce(sumf, list(map(left_rights, histories)), (0, 0))))
