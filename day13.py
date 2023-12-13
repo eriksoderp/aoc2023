@@ -9,7 +9,7 @@ groups = [list(g) for k, g in groups if not k]
 transpose = lambda lines: [''.join(i) for i in zip(*lines)]
 
 def difference(g1, g2, differences):
-    if len(g1) > len(g2) or len(g2) > len(g1):
+    if len(g1) != len(g2):
         return False
 
     difference = 0
