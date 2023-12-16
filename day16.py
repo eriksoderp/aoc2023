@@ -9,16 +9,17 @@ def reflect(c, dir_x, dir_y):
     if c == '\\': return (dir_y, dir_x)
 
 def energizer(x, y, direction):
-    while is_in_grid(x, y):
+    while (x, y, direction) not in memo and is_in_grid(x, y):
+        memo.add((x, y, direction))
         energized.add((x,y))
         c = grid[y][x]
 
         if c == '|' and direction[0] != 0:
-            n, s = (0, -1), (0, 1)
-            return [(x, y-1, n), (x, y+1, s)]
+            n, direction = (0, -1), (0, 1)
+            energizer(x, y-1, n)
         elif c == '-' and direction[1] != 0:
-            w, e = (-1, 0), (1, 0)
-            return [(x-1, y, w), (x+1, y, e)]
+            w, direction = (-1, 0), (1, 0)
+            energizer(x-1, y, w)
         elif c in ['\\', '/']:
             direction = reflect(c, *direction)
 
@@ -31,28 +32,13 @@ task_queue = queue.Queue()
 memo = set()
 
 def run(init_state):
-    task_queue.put(init_state)
-    while not task_queue.empty():
-        args = task_queue.get()
-        result = energizer(*args)
-        if result is not None:
-            for r in result:
-                if r in memo: continue
-                memo.add(r)
-                task_queue.put(r)
-
+    energizer(*init_state)
     memo.clear()
-    results.append(len(energized))
+    results[init_state] = len(energized)
     energized.clear()
     return None
 
-# part 1
-results = []
-run((0, 0, (1, 0)))
-print(max(results))
-
-# part 2
-results = []
+results = {}
 glen = len(grid)
 innerglen = len(grid[0])
 for i in range(glen):
@@ -61,4 +47,8 @@ for i in range(glen):
 for j in range(innerglen):
     run((j, 0, (0, 1)))
     run((j, glen-1, (0, -1)))
-print(max(results))
+
+# part 1
+print(results[(0, 0, (1, 0))])
+# part 2
+print(max(results.values()))
