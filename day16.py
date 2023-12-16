@@ -1,4 +1,3 @@
-import queue
 with open('input16.txt', 'r') as f:
     grid = list(map(str.strip, f.readlines()))
 
@@ -25,19 +24,14 @@ def energizer(x, y, direction):
 
         x, y = x+direction[0], y+direction[1]
 
-    return None
-
-energized = set()
-task_queue = queue.Queue()
-memo = set()
-
 def run(init_state):
     energizer(*init_state)
-    memo.clear()
     results[init_state] = len(energized)
     energized.clear()
-    return None
+    memo.clear()
 
+energized = set()
+memo = set()
 results = {}
 glen = len(grid)
 innerglen = len(grid[0])
