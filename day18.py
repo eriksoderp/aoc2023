@@ -6,14 +6,11 @@ def get_dir(dir):
         case 'L' | '2': return (-1, 0)
         case 'U' | '3': return (0, -1)
 
-add = lambda x, y, dir_x, dir_y: (x+dir_x, y+dir_y)
-scale = lambda dir_x, dir_y, scalar: (dir_x*scalar, dir_y*scalar)
-
 def get_area(instructions):
     path, point = [], (0, 0)
     for d, l, _ in instructions:
-        dir = get_dir(d)
-        point = add(*point, *scale(*dir, int(l)))
+        dx, dy = get_dir(d)
+        point = (point[0] + dx*int(l), point[1] + dy*int(l))
         path.append(point)
     poly = Polygon(path)
     return int(poly.area + poly.length/2 + 1)
