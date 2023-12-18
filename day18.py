@@ -7,6 +7,9 @@ def get_dir(dir):
         case 'D': return (0, 1)
         case 'U': return (0, -1)
 
+add = lambda x, y, dir_x, dir_y: (x+dir_x, y+dir_y)
+scale = lambda dir_x, dir_y, scalar: (dir_x*scalar, dir_y*scalar)
+
 def get_area(instructions):
     path, point = [], (0, 0)
     for d, l, _ in instructions:
