@@ -1,11 +1,10 @@
 from shapely import Polygon
-
 def get_dir(dir):
     match dir:
-        case 'R': return (1, 0)
-        case 'L': return (-1, 0)
-        case 'D': return (0, 1)
-        case 'U': return (0, -1)
+        case 'R' | '0': return (1, 0)
+        case 'D' | '1': return (0, 1)
+        case 'L' | '2': return (-1, 0)
+        case 'U' | '3': return (0, -1)
 
 add = lambda x, y, dir_x, dir_y: (x+dir_x, y+dir_y)
 scale = lambda dir_x, dir_y, scalar: (dir_x*scalar, dir_y*scalar)
@@ -24,13 +23,6 @@ instructions = [tuple(l.split()) for l in open('input18.txt').readlines()]
 print(get_area(instructions))
 
 # part 2
-def get_hexa_dir(c):
-    match c:
-        case '0': return 'R'
-        case '1': return 'D'
-        case '2': return 'L'
-        case '3': return 'U'
-
-parse_color = lambda color: (get_hexa_dir(color[-2]), int(color[2:-2], 16), color)
+parse_color = lambda color: (color[-2], int(color[2:-2], 16), color)
 instructions = [parse_color(c) for _, _, c in instructions]
 print(get_area(instructions))
