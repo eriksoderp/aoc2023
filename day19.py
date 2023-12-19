@@ -2,8 +2,8 @@ from itertools import groupby
 import re
 from copy import deepcopy
 from math import prod
-with open('input19.txt', 'r') as f:
-    lines = [line.strip() for line in f.readlines()]
+
+lines = [line.strip() for line in open('input19.txt', 'r').readlines()]
 
 gs = [list(g) for k, g in groupby(lines, lambda x: x == '') if not k]
 
@@ -14,9 +14,7 @@ tests = [{v[0]:int(v[2:]) for v in vs[1:-1].split(',')}
                           for vs in gs[1]]
 
 # part 1
-count = 0
-for t in tests:
-    state = 'in'
+def run(t, count, state):
     x, m, a, s = t['x'], t['m'], t['a'], t['s']
     while state not in ('A', 'R'):
         rs = rules[state]
@@ -30,44 +28,44 @@ for t in tests:
                 state = new_state
                 break
 
-    if state == 'A':
-        count += (x+m+a+s)
+    if state == 'A': count += (x+m+a+s)
+    return count
 
-print(count)
+print(sum(run(t, 0, 'in') for t in tests))
 
 # part 2
-state = 'in'
-count = 0
-sr = range(1, 4001)
-todo = [({'x':sr, 'm':sr, 'a':sr, 's':sr}, 'in')]
-while todo:
-    mapping, state = todo.pop()
-    if state == 'A':
-        count += prod(len(r) for r in mapping.values())
-        continue
+def all_combinations(sr, count, state):
+    todo = [({'x':sr, 'm':sr, 'a':sr, 's':sr}, state)]
+    while todo:
+        mapping, state = todo.pop()
+        if state == 'A':
+            count += prod(len(r) for r in mapping.values())
+            continue
 
-    if state == 'R': continue
+        if state == 'R': continue
 
-    rs = rules[state]
-    for r in rs:
-        if ':' not in r:
-            todo.append((mapping, r))
-            break
+        rs = rules[state]
+        for r in rs:
+            if ':' not in r:
+                todo.append((mapping, r))
+                break
 
-        cond, new_state = r.split(':')
-        id, ran, n = cond[0], mapping[cond[0]], int(cond[2:])
-        new_mapping = deepcopy(mapping)
-        if cond[1] == '<':
-            low_range = range(ran.start, n)
-            new_mapping[id] = low_range
-            ran = range(n, ran.stop)
-            mapping[id] = ran
-        elif cond[1] == '>':
-            high_range = range(n+1, ran.stop)
-            new_mapping[id] = high_range
-            ran = range(ran.start, n+1)
-            mapping[id] = ran
+            cond, new_state = r.split(':')
+            id, ran, n = cond[0], mapping[cond[0]], int(cond[2:])
+            new_mapping = deepcopy(mapping)
+            if cond[1] == '<':
+                low_range = range(ran.start, n)
+                new_mapping[id] = low_range
+                ran = range(n, ran.stop)
+                mapping[id] = ran
+            elif cond[1] == '>':
+                high_range = range(n+1, ran.stop)
+                new_mapping[id] = high_range
+                ran = range(ran.start, n+1)
+                mapping[id] = ran
 
-        todo.append((new_mapping, new_state))
+            todo.append((new_mapping, new_state))
 
-print(count)
+    return count
+
+print(all_combinations(range(1, 4001), 0, 'in'))
