@@ -17,8 +17,7 @@ tests = [{v[0]:int(v[2:]) for v in vs[1:-1].split(',')}
 def run(t, count, state):
     x, m, a, s = t.values()
     while state not in ('A', 'R'):
-        rs = rules[state]
-        for r in rs:
+        for r in rules[state]:
             if ':' not in r:
                 state = r
                 break
@@ -44,8 +43,7 @@ def all_combinations(sr, count, state):
 
         if state == 'R': continue
 
-        rs = rules[state]
-        for r in rs:
+        for r in rules[state]:
             if ':' not in r:
                 todo.append((mapping, r))
                 break
