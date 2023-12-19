@@ -15,7 +15,7 @@ tests = [{v[0]:int(v[2:]) for v in vs[1:-1].split(',')}
 
 # part 1
 def run(t, count, state):
-    x, m, a, s = t['x'], t['m'], t['a'], t['s']
+    x, m, a, s = t.values()
     while state not in ('A', 'R'):
         rs = rules[state]
         for r in rs:
@@ -54,13 +54,11 @@ def all_combinations(sr, count, state):
             id, ran, n = cond[0], mapping[cond[0]], int(cond[2:])
             new_mapping = deepcopy(mapping)
             if cond[1] == '<':
-                low_range = range(ran.start, n)
-                new_mapping[id] = low_range
+                new_mapping[id] = range(ran.start, n)
                 ran = range(n, ran.stop)
                 mapping[id] = ran
             elif cond[1] == '>':
-                high_range = range(n+1, ran.stop)
-                new_mapping[id] = high_range
+                new_mapping[id] = range(n+1, ran.stop)
                 ran = range(ran.start, n+1)
                 mapping[id] = ran
 
