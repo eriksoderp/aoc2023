@@ -10,14 +10,12 @@ turn = lambda dir_x, dir_y: ((dir_y, dir_x), (-dir_y, -dir_x))
 
 start, end = list(grid.keys())[0], list(grid.keys())[-1]
 
-# part 1
 def arrow_dir(arrow):
     match arrow:
         case '<': return (-1, 0)
         case '^': return (0, -1)
         case '>': return (1, 0)
         case 'v': return (0, 1)
-        case _: return (0, 0)
 
 results = []
 def path(visited, pos, dir):
@@ -39,41 +37,30 @@ def path(visited, pos, dir):
             pos = add(*pos, *dir)
     return -1
 
+# part 1
 path(set(), start, (0, 1))
 print(max(results)-1)
 
 # part 2
 dirs = [(-1, 0), (0, -1), (1, 0), (0, 1)]
-neighbours = {p: [add(*p, *d) for d in dirs if add(*p, *d) in grid]
-                              for p in grid}
+neighbours = {p: [add(*p, *d) for d in dirs if add(*p, *d) in grid] for p in grid}
 
 G = nx.Graph()
-G.add_edges_from(((p, n) for p, ns in neighbours.items()
-                         for n in ns))
+G.add_edges_from(((p, n) for p, ns in neighbours.items() for n in ns))
 
-crossways = set()
-for (j, i) in grid.keys():
-    count = sum(1 for x, y in ((j-1, i), (j+1, i), (j, i-1), (j, i+1))
-                  if (x, y) in grid)
+crossways = {p for p, ns in neighbours.items() if len(ns) >= 3}
 
-    if count >= 3: crossways.add((j, i))
-
-start_neighs, end_neighs = set(nx.neighbors(G, start)), set(nx.neighbors(G, end))
 cws = {n: set(nx.neighbors(G, n)) for n in crossways}
+cws[start], cws[end] = set(nx.neighbors(G, start)), set(nx.neighbors(G, end))
+
 G.remove_nodes_from(crossways)
-cws[start], cws[end] = start_neighs, end_neighs
 components = list(nx.connected_components(G))
+
 H = nx.Graph()
-for component in components:
-    connected = []
-    for cw, neighs in cws.items():
-        if len(neighs.intersection(component)) == 1:
-            connected.append(cw)
+for c in components:
+    u, v = [cw for cw, ns in cws.items() if len(ns.intersection(c)) == 1]
+    H.add_edge(u, v, weight=len(c)+1)
 
-    u, v = connected
-    H.add_edge(u, v, weight=len(component)+1)
-
-max_path = max((sum(H.get_edge_data(u, v)['weight'] for u, v in zip(path, path[1:]))-2
-                    for path in list(nx.all_simple_paths(H, start, end))))
+max_path = max((sum(H.get_edge_data(u, v)['weight'] for u, v in zip(path, path[1:]))-2 for path in list(nx.all_simple_paths(H, start, end))))
 
 print(max_path)
